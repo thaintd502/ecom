@@ -13,7 +13,8 @@ public class CORSConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // Thay thế bằng nguồn gốc thực tế của bạn
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://10.145.12.43:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
