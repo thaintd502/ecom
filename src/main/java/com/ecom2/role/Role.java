@@ -1,6 +1,5 @@
 package com.ecom2.role;
 
-import com.ecom2.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
