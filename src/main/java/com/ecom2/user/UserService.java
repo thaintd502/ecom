@@ -13,4 +13,9 @@ public interface UserService {
     User signUp(SignupRequest request);
 
     List<User> getAllUsers();
+
+    void deleteUserById(int id);
+
+    User findById(int id);
+
 }
