@@ -73,6 +73,7 @@ public class AdminController {
 
     @PutMapping("edit/{id}")
     public ResponseEntity<?> editUser(@PathVariable int id, @RequestBody SignupRequest request) {
+
         try {
             User user = userService.findById(id);
 
