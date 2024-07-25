@@ -27,11 +27,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(@Lazy CustomerRepository customerRepository) {
-        super();
-        this.customerRepository = customerRepository;
-    }
-
     @Autowired
     private UserService userService;
 

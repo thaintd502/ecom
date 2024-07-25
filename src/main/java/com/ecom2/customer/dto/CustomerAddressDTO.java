@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CustomerAddressDTO {
-    private int addressId;
+    private long addressId;
     private String address;
     private String commune;
     private String district;
