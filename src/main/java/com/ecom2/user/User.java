@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,5 +25,4 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Set<Role> listRoles;
 
-    // Getters and Setters
 }

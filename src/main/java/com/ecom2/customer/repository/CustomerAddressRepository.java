@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Integer> {
+public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
 
     @Modifying
     @Transactional
