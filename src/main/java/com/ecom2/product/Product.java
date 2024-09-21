@@ -24,7 +24,13 @@ public class Product {
     private Brand brand;
 
     @Column
-    private int price;
+    private double price;
+
+    @Column
+    private double promotePrice;
+
+    @Column
+    private double importPrice;
 
     @Column
     private int stockQuantity;
@@ -32,11 +38,25 @@ public class Product {
     @Column
     private int discount;
 
+    @Column(nullable = false)
+    private String productCode;
+
+    @Column
+    private int importQuantity;
+
+    @Column
+    private int availableStock;
+
+    @Column(length = 1000)
+    private String description;
+
+    @Column
+    private String imageUrl;
+
     @ManyToMany
     @JoinTable(
             name = "product_category_links",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
-
 }

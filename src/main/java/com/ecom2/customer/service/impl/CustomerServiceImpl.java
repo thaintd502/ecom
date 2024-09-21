@@ -84,8 +84,6 @@ public class CustomerServiceImpl implements CustomerService {
             // Xóa khách hàng
             customerRepository.delete(customer);
         }
-        // Xóa người dùng
-        // (Nếu cần, tùy thuộc vào thiết lập của ứng dụng và quan hệ giữa các bảng)
     }
 
 
