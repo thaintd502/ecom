@@ -44,9 +44,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User signUp(SignupRequest request) {
         User user = new User();
-        if (request.getUserName() != null) user.setUserName(request.getUserName());
+        if (request.getUserName() != null) user.setUserName(request.getUserName().toLowerCase());
         if (request.getPassword() != null) user.setPassword(passwordEncoder.encode(request.getPassword()));
-        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        if (request.getEmail() != null) user.setEmail(request.getEmail().toLowerCase());
 //        if (request.getPhoneNumber() != null) user.setPhoneNumber(request.getPhoneNumber());
 //        if (request.getAddress() != null) user.setAddress(request.getAddress());
         user.setCreated(new Date());

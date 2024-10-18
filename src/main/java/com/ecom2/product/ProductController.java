@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/")
 public class ProductController {
 
     private final ProductService productService;
@@ -41,7 +41,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/get-all-products")
+    @GetMapping("api/v1/get-all-products")
     public ResponseEntity<List<ProductTableDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         List<ProductTableDTO> productDTOs = products.stream().map(this::convertToProductTableDTO).collect(Collectors.toList());
@@ -57,12 +57,12 @@ public class ProductController {
         return productDTO;
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("api/v1/product/{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long id){
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    @PostMapping("/add-product")
+    @PostMapping("/admin/add-product")
     public ResponseEntity<?> addProduct(
             @RequestParam(required = false) String productCode,
             @RequestParam(required = false) String productName,
@@ -102,7 +102,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/edit-product/{productId}")
+    @PutMapping("/admin/edit-product/{productId}")
     public ResponseEntity<?> editProduct(
             @PathVariable Long productId,  // Product ID để chỉnh sửa
             @RequestParam(required = false) String productCode,
@@ -179,7 +179,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete-product/{productId}")
+    @DeleteMapping("/admin/delete-product/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
         try {
             Optional<Product> product = productService.findById(productId);

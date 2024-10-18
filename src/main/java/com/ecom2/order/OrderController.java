@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
 public class OrderController {
 
     @Autowired
@@ -25,14 +24,14 @@ public class OrderController {
     @Autowired
     OrderDetailService orderDetailService;
 
-    @GetMapping("/get-all-orders")
+    @GetMapping("/admin/get-all-orders")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         List<OrderDTO> orderDTOs = orderService.convertToOrderDTOs(orders);
         return ResponseEntity.ok(orderDTOs);
     }
 
-    @PutMapping("/update-order-status/{orderId}")
+    @PutMapping("/admin/update-order-status/{orderId}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody StatusOrderDTO request) {
         try {
             orderService.updateOrderStatus(orderId, request.getStatus());
@@ -42,7 +41,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/orders/{orderId}")
+    @GetMapping("api/v1/orders/{orderId}")
     public ResponseEntity<CustomerSignup> getOrder(@PathVariable Long orderId) {
 
         Order order = orderService.findById(orderId);
@@ -60,7 +59,7 @@ public class OrderController {
         return ResponseEntity.ok(customer);
     }
 
-    @GetMapping("orders/{orderId}/details")
+    @GetMapping("api/v1/orders/{orderId}/details")
     public ResponseEntity<List<ProductBillDTO>> getOrderDetails(@PathVariable Long orderId) {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(orderId);
         if (orderDetails.isEmpty()) {

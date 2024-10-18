@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/")
 public class CustomerController {
 
     @Autowired
@@ -46,14 +46,13 @@ public class CustomerController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/get-all-customers")
+    @GetMapping("/admin/get-all-customers")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
-    // Xóa khách hàng bằng ID
-    @DeleteMapping("/delete-customer/{customerId}")
+    @DeleteMapping("/admin/delete-customer/{customerId}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long customerId) {
         try {
             customerService.deleteCustomer(customerId);
@@ -63,7 +62,7 @@ public class CustomerController {
         }
     }
 
-    @GetMapping("/customer-address/{customerId}")
+    @GetMapping("/api/v1/customer-address/{customerId}")
     public ResponseEntity<CustomerAddressDTO> getCustomerAddressByCustomerId(@PathVariable Long customerId) {
         return customerAddressService.findByCustomerId(customerId)
                 .map(address -> {
@@ -79,19 +78,19 @@ public class CustomerController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/customer/{id}")
+    @GetMapping("/api/v1/customer/{id}")
     public ResponseEntity<Optional<Customer>> getCustomerById(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.findById(id));
     }
 
-    @DeleteMapping("/delete-user/{id}")
+    @DeleteMapping("/admin/delete-user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         customerService.deleteUserAndRelatedEntities(id);
         userService.deleteUserById(id);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/signup-customer")
+    @PostMapping("/api/v1/signup-customer")
     public ResponseEntity<?> signupCustomer(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phone,
@@ -120,10 +119,8 @@ public class CustomerController {
         listRoles.add(userRole);
         newUser.setListRoles(listRoles);
 
-        // Save the new User entity
         User savedUser = userService.saveOrUpdate(newUser);
 
-        // Create a new Customer entity
         Customer newCustomer = new Customer();
         newCustomer.setName(name);
         newCustomer.setPhone(phone);
@@ -133,28 +130,24 @@ public class CustomerController {
 
         newCustomer.setBirthdate(dateFormat.parse(birthdate));
         newCustomer.setImageUrl(cloudinaryService.uploadFile(imageUrl));
-        newCustomer.setUser(savedUser); // Associate user with customer
+        newCustomer.setUser(savedUser);
 
-
-        // Save the new Customer entity
         Customer savedCustomer = customerService.saveCustomer(newCustomer);
 
-        // Create a new CustomerAddress entity
         CustomerAddress customerAddress = new CustomerAddress();
         customerAddress.setAddress(address);
         customerAddress.setCountry("Việt Nam");
         customerAddress.setCity(city);
         customerAddress.setDistrict(district);
         customerAddress.setCommune(commune);
-        customerAddress.setCustomer(savedCustomer); // Associate address with customer
+        customerAddress.setCustomer(savedCustomer);
 
-        // Save the new CustomerAddress entity
         customerAddressService.saveCustomer(customerAddress);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 
-    @PutMapping("/edit-customer/{customerId}")
+    @PutMapping("/api/v1/edit-customer/{customerId}")
     public ResponseEntity<?> editCustomer(
             @PathVariable Long customerId,
             @RequestParam(required = false) String name,
@@ -218,51 +211,5 @@ public class CustomerController {
         return ResponseEntity.ok("Customer updated successfully!");
     }
 
-// Edit customer use CustomerSignup but not edit image yet
-//    @PutMapping("/edit-customer/{customerId}")
-//    public ResponseEntity<?> editCustomer(@PathVariable Long customerId, @RequestBody CustomerSignup customerSignup) {
-//        // Tìm customer theo ID
-//        Customer existingCustomer = customerService.findById(customerId)
-//                .orElseThrow(() -> new RuntimeException("Customer not found"));
-//
-//        // Tìm user liên quan đến customer
-//        User existingUser = existingCustomer.getUser();
-//
-//        // Cập nhật thông tin user
-//        existingUser.setUserName(customerSignup.getUserName());
-//        if (!customerSignup.getPassword().isEmpty()) {
-//            existingUser.setPassword(passwordEncoder.encode(customerSignup.getPassword()));
-//        }
-//        existingUser.setEmail(customerSignup.getEmail());
-//
-//        // Lưu user đã cập nhật
-//        User savedUser = userService.saveOrUpdate(existingUser);
-//
-//        // Cập nhật thông tin customer
-//        existingCustomer.setName(customerSignup.getName());
-//        existingCustomer.setPhone(customerSignup.getPhone());
-//        existingCustomer.setGender(customerSignup.getGender());
-//        existingCustomer.setBirthdate(customerSignup.getBirthdate());
-//        existingCustomer.setImageUrl(customerSignup.getImageUrl());
-//        existingCustomer.setUser(savedUser); // Associate user with customer
-//
-//        // Lưu customer đã cập nhật
-//        Customer savedCustomer = customerService.saveCustomer(existingCustomer);
-//
-//        // Tìm địa chỉ liên quan đến customer
-//        CustomerAddress existingAddress = customerAddressService.findByCustomer(savedCustomer);
-//
-//        // Cập nhật thông tin địa chỉ
-//        existingAddress.setAddress(customerSignup.getAddress());
-//        existingAddress.setCountry(customerSignup.getCountry());
-//        existingAddress.setCity(customerSignup.getCity());
-//        existingAddress.setDistrict(customerSignup.getDistrict());
-//        existingAddress.setCommune(customerSignup.getCommune());
-//
-//        // Lưu địa chỉ đã cập nhật
-//        customerAddressService.saveCustomer(existingAddress);
-//
-//        return ResponseEntity.ok("Customer updated successfully!");
-//    }
 }
 
