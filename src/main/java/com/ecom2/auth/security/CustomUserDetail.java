@@ -1,6 +1,6 @@
 package com.ecom2.auth.security;
 
-import com.ecom2.user.User;
+import com.ecom2.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;

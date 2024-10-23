@@ -10,12 +10,10 @@ import com.ecom2.customer.service.CustomerService;
 import com.ecom2.role.ERole;
 import com.ecom2.role.Role;
 import com.ecom2.role.RoleService;
-import com.ecom2.user.User;
-import com.ecom2.user.UserService;
-import jakarta.persistence.EntityNotFoundException;
+import com.ecom2.user.entity.User;
+import com.ecom2.user.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

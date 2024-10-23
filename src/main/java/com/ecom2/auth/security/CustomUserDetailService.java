@@ -1,7 +1,7 @@
 package com.ecom2.auth.security;
 
-import com.ecom2.user.User;
-import com.ecom2.user.UserRepository;
+import com.ecom2.user.entity.User;
+import com.ecom2.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -41,7 +41,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("api/v1/get-all-products")
+    @GetMapping("api/v1/products")
     public ResponseEntity<List<ProductTableDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         List<ProductTableDTO> productDTOs = products.stream().map(this::convertToProductTableDTO).collect(Collectors.toList());
@@ -60,6 +60,39 @@ public class ProductController {
     @GetMapping("api/v1/product/{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long id){
         return ResponseEntity.ok(productService.findById(id));
+    }
+
+    @GetMapping("api/v1/products/categories")
+    public ResponseEntity<?> getProductsByCategoryId(@RequestParam Long categoryId){
+        try{
+            List<Product> products = productService.getProductsByCategoryId(categoryId);
+            if(products.isEmpty()){
+                return ResponseEntity.status(404).body("No products found for category ID" + categoryId);
+            }
+            return ResponseEntity.ok(products);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Error fetching products" + e.getMessage());
+        }
+    }
+
+    @GetMapping("api/v1/products/search-by-keyword")
+    public ResponseEntity<?> searchProductsByKeyword(@RequestParam String keyword){
+        try{
+            List<Product> products = productService.searchProductsByKeyword(keyword);
+            if(products.isEmpty()){
+                return ResponseEntity.status(404).body("No products found for keyword: " + keyword);
+            }
+            return ResponseEntity.ok(products);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Error searching products: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("api/v1/products/discounted")
+    public ResponseEntity<List<Product>> getDiscountedProducts() {
+        List<Product> discountedProducts = productService.getDiscountedProducts();
+        return ResponseEntity.ok(discountedProducts);
     }
 
     @PostMapping("/admin/add-product")
@@ -116,13 +149,11 @@ public class ProductController {
             @RequestParam(required = false) String importQuantity,
             @RequestParam(required = false) String description) throws IOException {
         try {
-            // Tìm Product từ cơ sở dữ liệu
             Optional<Product> product = productService.findById(productId);
             if (product.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
             }
 
-            // Cập nhật thông tin sản phẩm nếu có
             if (productCode != null) {
                 product.get().setProductCode(productCode);
             }
@@ -153,24 +184,21 @@ public class ProductController {
 
             // Nếu có ảnh mới, cập nhật URL ảnh
             if (imageUrl != null && !imageUrl.isEmpty()) {
-                String imageUrlUploaded = cloudinaryService.uploadFile(imageUrl); // Upload ảnh
+                String imageUrlUploaded = cloudinaryService.uploadFile(imageUrl);
                 product.get().setImageUrl(imageUrlUploaded);
             }
 
-            // Cập nhật thương hiệu nếu có thay đổi
             if (brand != null) {
                 Brand brandSave = brandService.findByName(brand);
                 product.get().setBrand(brandSave);
             }
 
-            // Cập nhật danh mục nếu có thay đổi
             if (category != null) {
                 Set<Category> categories = new HashSet<>();
                 categories.add(categoryService.findByName(category));
                 product.get().setCategories(categories);
             }
 
-            // Lưu sản phẩm đã chỉnh sửa
             productService.saveProduct(product.orElse(null));
 
             return ResponseEntity.ok("Product updated successfully!");

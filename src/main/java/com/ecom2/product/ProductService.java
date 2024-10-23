@@ -12,4 +12,7 @@ public interface ProductService {
     void saveProduct(Product product);
     Optional<Product> findById(Long productId);
     void deleteProduct(Long productId);
+    List<Product> getProductsByCategoryId(Long categoryId);
+    List<Product> searchProductsByKeyword(String keyword);
+    List<Product> getDiscountedProducts();
 }

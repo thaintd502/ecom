@@ -34,7 +34,6 @@ public class ProductServiceImpl implements ProductService{
     public void addProduct(ProductAddDTO productAddDTO) {
         Product product = new Product();
 
-        // Setting basic product fields
         product.setProductCode(productAddDTO.getProductCode());
         product.setName(productAddDTO.getProductName());
         product.setPrice(productAddDTO.getPrice());
@@ -73,6 +72,21 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryId(Long categoryId) {
+        return productRepository.findProductsByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<Product> searchProductsByKeyword(String keyword) {
+        return productRepository.searchProductsByKeyword(keyword);
+    }
+
+    @Override
+    public List<Product> getDiscountedProducts() {
+        return productRepository.findByDiscountGreaterThan(0);
     }
 
 

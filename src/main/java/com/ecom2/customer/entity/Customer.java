@@ -1,6 +1,6 @@
 package com.ecom2.customer.entity;
 
-import com.ecom2.user.User;
+import com.ecom2.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

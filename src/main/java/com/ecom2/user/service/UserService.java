@@ -1,6 +1,7 @@
-package com.ecom2.user;
+package com.ecom2.user.service;
 
 import com.ecom2.auth.payload.request.SignupRequest;
+import com.ecom2.user.entity.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,9 @@ public interface UserService {
     void deleteUserById(int id);
 
     User findById(int id);
+
+    Optional<User> findByEmail(String email);
+    void sendOtpEmail(String to, String otp);
+    boolean changePassword(String username, String oldPassword, String newPassword);
 
 }

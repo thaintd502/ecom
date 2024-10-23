@@ -1,4 +1,4 @@
-package com.ecom2.user;
+package com.ecom2.user.entity;
 
 import com.ecom2.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
