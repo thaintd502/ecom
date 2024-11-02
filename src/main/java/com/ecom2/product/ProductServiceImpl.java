@@ -5,7 +5,8 @@ import com.ecom2.brand.BrandRepository;
 import com.ecom2.category.Category;
 import com.ecom2.category.CategoryRepository;
 import com.ecom2.cloudinary.CloudinaryService;
-import com.ecom2.product.dto.ProductAddDTO;
+import com.ecom2.product.dto.ProductDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +28,22 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     CloudinaryService cloudinaryService;
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public ProductServiceImpl(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
-    public void addProduct(ProductAddDTO productAddDTO) {
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productDTOS = products.stream().
+                map(p -> modelMapper.map(p, ProductDTO.class))
+                .collect(Collectors.toList());
+        return productDTOS;
+    }
+
+    public void addProduct(ProductDTO productAddDTO) {
         Product product = new Product();
 
         product.setProductCode(productAddDTO.getProductCode());

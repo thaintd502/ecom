@@ -11,4 +11,5 @@ public interface OrderService {
     List<OrderDTO> convertToOrderDTOs(List<Order> orders);
     void updateOrderStatus(Long orderId, String newStatus);
     Order findById(Long orderId);
+    List<OrderDTO> getOrdersByUser(String userName);
 }

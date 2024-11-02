@@ -1,6 +1,6 @@
 package com.ecom2.customer.service.impl;
 
-import com.ecom2.customer.dto.CustomerSignup;
+import com.ecom2.customer.dto.CustomerDTO;
 import com.ecom2.customer.entity.Customer;
 import com.ecom2.customer.entity.CustomerAddress;
 import com.ecom2.customer.repository.CustomerAddressRepository;
@@ -84,10 +84,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public Customer findByUserName(String userName) {
+        return customerRepository.findByUserName(userName);
+    }
+
 
     @Override
     @Transactional
-    public void signUp(CustomerSignup customerSignup) {
+    public void signUp(CustomerDTO customerSignup) {
 
         // Create a new User entity
         User newUser = new User();

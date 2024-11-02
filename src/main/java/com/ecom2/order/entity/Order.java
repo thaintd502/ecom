@@ -3,10 +3,10 @@ package com.ecom2.order.entity;
 import com.ecom2.branch.entity.ProductBranchLinks;
 import com.ecom2.customer.entity.Customer;
 import com.ecom2.customer.entity.CustomerAddress;
+import com.ecom2.payment.Payment;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +33,11 @@ public class Order {
     private String status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
+    private List<OrderItem> orderItems;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     @ManyToOne
     @JoinColumn(name = "product_branch_link_id", referencedColumnName = "id")
@@ -43,7 +47,7 @@ public class Order {
 
         double sum = 0;
 
-        for (OrderDetail x : orderDetails){
+        for (OrderItem x : orderItems){
             sum += x.getPrice();
         }
 

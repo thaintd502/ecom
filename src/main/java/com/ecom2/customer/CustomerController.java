@@ -89,7 +89,7 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/v1/signup-customer")
+    @PostMapping("/api/v1/add-customer")
     public ResponseEntity<?> signupCustomer(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phone,

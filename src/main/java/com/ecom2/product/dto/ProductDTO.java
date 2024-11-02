@@ -3,8 +3,9 @@ package com.ecom2.product.dto;
 import lombok.Data;
 
 @Data
-public class ProductAddDTO {
+public class ProductDTO {
 
+    private Long productId;
     private String productCode;
     private String productName;
     private String category;

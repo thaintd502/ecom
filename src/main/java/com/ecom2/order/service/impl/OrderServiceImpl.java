@@ -1,5 +1,7 @@
 package com.ecom2.order.service.impl;
 
+import com.ecom2.customer.entity.Customer;
+import com.ecom2.customer.service.CustomerService;
 import com.ecom2.order.dto.OrderDTO;
 import com.ecom2.order.entity.Order;
 import com.ecom2.order.repository.OrderRepository;
@@ -17,6 +19,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private CustomerService customerService;
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -51,5 +55,27 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new RuntimeException("Order not found");
         }
+    }
+
+    @Override
+    public List<OrderDTO> getOrdersByUser(String userName) {
+        Customer customer = customerService.findByUserName(userName);
+        List<Order> orders = orderRepository.findByCustomer_CustomerId(customer.getCustomerId());
+
+        return orders.stream()
+                .map(this::convertToOrderDTO)
+                .collect(Collectors.toList());
+    }
+
+    private OrderDTO convertToOrderDTO(Order order) {
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setOrderId(order.getOrderId());
+        orderDTO.setCustomerName(order.getCustomer().getName());
+        orderDTO.setCustomerPhone(order.getCustomer().getPhone());
+        orderDTO.setOrderDate(order.getOrderDate());
+        orderDTO.setTotalAmount(order.getTotalAmount());
+        orderDTO.setShippingFee(order.getShippingFee());
+        orderDTO.setStatus(order.getStatus());
+        return orderDTO;
     }
 }

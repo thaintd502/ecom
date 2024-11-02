@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Data
-public class CustomerSignup {
+public class CustomerDTO {
 
     private String userName;
     private String password;

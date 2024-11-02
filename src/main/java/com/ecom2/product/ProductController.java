@@ -5,7 +5,7 @@ import com.ecom2.brand.BrandService;
 import com.ecom2.category.Category;
 import com.ecom2.category.CategoryService;
 import com.ecom2.cloudinary.CloudinaryService;
-import com.ecom2.product.dto.ProductTableDTO;
+import com.ecom2.product.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,20 +42,19 @@ public class ProductController {
     }
 
     @GetMapping("api/v1/products")
-    public ResponseEntity<List<ProductTableDTO>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        List<ProductTableDTO> productDTOs = products.stream().map(this::convertToProductTableDTO).collect(Collectors.toList());
+    public ResponseEntity<?> getAllProducts() {
+        List<ProductDTO> productDTOs = productService.getAllProducts();
         return ResponseEntity.ok(productDTOs);
     }
-
-    private ProductTableDTO convertToProductTableDTO(Product product) {
-        ProductTableDTO productDTO = new ProductTableDTO();
-        productDTO.setProductId(product.getProductId());
-        productDTO.setName(product.getName());
-        productDTO.setCategory(product.getCategories().stream().map(Category::getName).collect(Collectors.joining(", ")));
-        productDTO.setPrice(product.getPrice());
-        return productDTO;
-    }
+//
+//    private ProductDTO convertToProductDTO(Product product) {
+//        ProductDTO productDTO = new ProductDTO();
+//        productDTO.setProductId(product.getProductId());
+//        productDTO.setProductName(product.getName());
+//        productDTO.setCategory(product.getCategories().stream().map(Category::getName).collect(Collectors.joining(", ")));
+//        productDTO.setPrice(product.getPrice());
+//        return productDTO;
+//    }
 
     @GetMapping("api/v1/product/{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long id){

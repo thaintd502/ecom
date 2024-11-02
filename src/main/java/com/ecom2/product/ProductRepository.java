@@ -11,13 +11,13 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p JOIN p.categories c WHERE c.categoryId = :categoryId")
-    List<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId);
+    List<Product> findProductsByCategoryId(Long categoryId);
 
     @Query("SELECT p FROM Product p JOIN p.categories c " +
             "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Product> searchProductsByKeyword(@Param("keyword") String keyword);
+    List<Product> searchProductsByKeyword(String keyword);
 
     List<Product> findByDiscountGreaterThan(int discount);
 }

@@ -4,15 +4,13 @@ import com.ecom2.product.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Entity
-@Table(name = "Order_detail")
+@Table(name = "order_item")
 @Data
-public class OrderDetail {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderDetailId;
+    private Long orderItemId;
 
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "orderId")

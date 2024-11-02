@@ -17,7 +17,7 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
     @Modifying
     @Transactional
     @Query("DELETE FROM CustomerAddress ca WHERE ca.customer.customerId = :customerId")
-    void deleteByCustomerId(@Param("customerId") Long customerId);
+    void deleteByCustomerId(Long customerId);
 
 //    @Modifying
 //    @Transactional
