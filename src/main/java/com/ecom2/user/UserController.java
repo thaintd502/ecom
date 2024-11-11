@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -38,7 +38,7 @@ public class UserController {
     private final RoleService roleService;
     private final OTPService otpService;
 
-    @PostMapping("/api/v1/signin")
+    @PostMapping("/public/signin")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
@@ -50,7 +50,7 @@ public class UserController {
         return ResponseEntity.ok(new JwtResponse(jwt, customUserDetail.getUsername(), customUserDetail.getEmail(), listRoles));
     }
 
-    @PostMapping("/api/v1/signup")
+    @PostMapping("/public/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest request) {
         if(userService.existsByUserName(request.getUserName())) return new ResponseEntity<>(new MessageResponse("Username already exists"), HttpStatus.BAD_REQUEST);
         if(userService.existsByEmail(request.getEmail())) return new ResponseEntity<>(new MessageResponse("Email already exists"), HttpStatus.BAD_REQUEST);
@@ -119,7 +119,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("api/v1/forgot-password")
+    @PostMapping("public/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         Optional<User> userOptional = userService.findByEmail(email);
         if (!userOptional.isPresent()) {
@@ -155,7 +155,7 @@ public class UserController {
         return calendar.getTime();
     }
 
-    @PostMapping("/api/v1/verify-otp")
+    @PostMapping("/public/verify-otp")
     public ResponseEntity<String> verifyOtp(@RequestParam String email, @RequestParam String otpCode) {
         // Kiểm tra xem email có tồn tại trong hệ thống không
         Optional<User> userOptional = userService.findByEmail(email);
@@ -182,7 +182,7 @@ public class UserController {
         return ResponseEntity.ok("OTP verified successfully");
     }
 
-    @PostMapping("/api/v1/reset-password")
+    @PostMapping("/public/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword) {
         // Kiểm tra xem email có tồn tại trong hệ thống không
         Optional<User> userOptional = userService.findByEmail(email);
@@ -207,7 +207,7 @@ public class UserController {
         return ResponseEntity.ok("Password reset successfully");
     }
 
-    @PostMapping("/api/v1/change-password")
+    @PostMapping("/public/change-password")
     public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token,
                                             @RequestParam String oldPassword,
                                             @RequestParam String newPassword) {

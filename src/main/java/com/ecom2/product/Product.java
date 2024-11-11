@@ -36,7 +36,7 @@ public class Product {
     private int stockQuantity;
 
     @Column
-    private int discount;
+    private double discount;
 
     @Column(nullable = false)
     private String productCode;
@@ -52,6 +52,9 @@ public class Product {
 
     @Column
     private String imageUrl;
+
+    @Column
+    private int sold;
 
     @ManyToMany
     @JoinTable(

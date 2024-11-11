@@ -25,7 +25,7 @@ public class CustomerAddress {
     private String city;
 
     @Column(name = "country")
-    private String country;
+    private String country = "Việt Nam";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")

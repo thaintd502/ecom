@@ -43,33 +43,33 @@ public class ProductServiceImpl implements ProductService{
         return productDTOS;
     }
 
-    public void addProduct(ProductDTO productAddDTO) {
-        Product product = new Product();
-
-        product.setProductCode(productAddDTO.getProductCode());
-        product.setName(productAddDTO.getProductName());
-        product.setPrice(productAddDTO.getPrice());
-        product.setPromotePrice(productAddDTO.getPromotePrice());
-        product.setStockQuantity(productAddDTO.getImportQuantity());
-        product.setImportPrice(productAddDTO.getImportPrice());
-        product.setDescription(productAddDTO.getDescription());
-        product.setImageUrl(productAddDTO.getImageUrl());
-
-        // Fetch and set the Brand by its ID
-        Brand brand = brandRepository.findById(Long.parseLong(productAddDTO.getBrand()))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID: " + productAddDTO.getBrand()));
-        product.setBrand(brand);
-
-        // Fetch and set the Categories (assuming multiple categories are allowed)
-        List<Long> categoryIds = Arrays.stream(productAddDTO.getCategory().split(","))
-                .map(Long::parseLong)
-                .collect(Collectors.toList());
-        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
-        product.setCategories(categories);
-
-        // Save the product to the database
-        productRepository.save(product);
-    }
+//    public void addProduct(ProductDTO productAddDTO) {
+//        Product product = new Product();
+//
+//        product.setProductCode(productAddDTO.getProductCode());
+//        product.setName(productAddDTO.getName());
+//        product.setPrice(productAddDTO.getPrice());
+//        product.setPromotePrice(productAddDTO.getPromotePrice());
+//        product.setStockQuantity(productAddDTO.getImportQuantity());
+//        product.setImportPrice(productAddDTO.getImportPrice());
+//        product.setDescription(productAddDTO.getDescription());
+//        product.setImageUrl(productAddDTO.getImageUrl());
+//
+//        // Fetch and set the Brand by its ID
+//        Brand brand = brandRepository.findById(Long.parseLong(productAddDTO.getBrand()))
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID: " + productAddDTO.getBrand()));
+//        product.setBrand(brand);
+//
+//        // Fetch and set the Categories (assuming multiple categories are allowed)
+//        List<Long> categoryIds = Arrays.stream(productAddDTO.getCategory().split(","))
+//                .map(Long::parseLong)
+//                .collect(Collectors.toList());
+//        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
+//        product.setCategories(categories);
+//
+//        // Save the product to the database
+//        productRepository.save(product);
+//    }
 
     @Override
     public void saveProduct(Product product) {

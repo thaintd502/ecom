@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class ProductController {
 
     private final ProductService productService;
@@ -41,7 +41,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("api/v1/products")
+    @GetMapping("public/products")
     public ResponseEntity<?> getAllProducts() {
         List<ProductDTO> productDTOs = productService.getAllProducts();
         return ResponseEntity.ok(productDTOs);
@@ -56,12 +56,12 @@ public class ProductController {
 //        return productDTO;
 //    }
 
-    @GetMapping("api/v1/product/{id}")
+    @GetMapping("public/product/{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long id){
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    @GetMapping("api/v1/products/categories")
+    @GetMapping("public/products/categories")
     public ResponseEntity<?> getProductsByCategoryId(@RequestParam Long categoryId){
         try{
             List<Product> products = productService.getProductsByCategoryId(categoryId);
@@ -75,7 +75,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("api/v1/products/search-by-keyword")
+    @GetMapping("public/products/search-by-keyword")
     public ResponseEntity<?> searchProductsByKeyword(@RequestParam String keyword){
         try{
             List<Product> products = productService.searchProductsByKeyword(keyword);
@@ -88,7 +88,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("api/v1/products/discounted")
+    @GetMapping("public/products/discounted")
     public ResponseEntity<List<Product>> getDiscountedProducts() {
         List<Product> discountedProducts = productService.getDiscountedProducts();
         return ResponseEntity.ok(discountedProducts);

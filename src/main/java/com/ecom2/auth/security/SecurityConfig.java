@@ -51,8 +51,8 @@ public class SecurityConfig {
                 csrf(csrf -> csrf.disable())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeHttpRequests(auth->
-                                auth.requestMatchers("/api/v1/**").permitAll()
-                                        .requestMatchers("/admin/**").hasAnyAuthority(ERole.ROLE_ADMIN.name())
+                                auth.requestMatchers("/api/public/**").permitAll()
+                                        .requestMatchers("/api/admin/**").hasAnyAuthority(ERole.ROLE_ADMIN.name())
                                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                         .requestMatchers("/cloudinary/**").permitAll()
 

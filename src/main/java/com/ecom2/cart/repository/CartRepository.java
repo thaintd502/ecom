@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-    @Query("SELECT c FROM Cart c WHERE c.user.userId = :userId")
-    Cart findCartByUserId(int userId);
+    @Query("SELECT c FROM Cart c WHERE c.user.userName = :userName AND c.cartId = :cartId")
+    Cart findCartByUserNameAndCartId(String userName, Long cartId);
 //
 //    @Query("SELECT c FROM Cart c WHERE c.product.productId = :productId")
 //    Cart findCartByProductId(Long productId);

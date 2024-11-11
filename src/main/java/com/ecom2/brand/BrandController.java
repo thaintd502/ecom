@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api")
 public class BrandController {
 
     @Autowired
     private BrandService brandService;
 
-    @GetMapping("/get-all-brands")
+    @GetMapping("/admin/get-all-brands")
     public ResponseEntity<List<Brand>> getAllBrands() {
         List<Brand> brands = brandService.getAllBrands();
         return ResponseEntity.ok(brands);

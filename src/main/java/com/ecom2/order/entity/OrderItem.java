@@ -24,7 +24,10 @@ public class OrderItem {
     private int quantity;
 
     @Column
-    private double price;
+    private double productPrice;
+
+    @Column
+    private double discount;
 
 }
 

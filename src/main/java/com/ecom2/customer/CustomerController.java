@@ -3,6 +3,7 @@ package com.ecom2.customer;
 import com.ecom2.auth.payload.response.MessageResponse;
 import com.ecom2.cloudinary.CloudinaryService;
 import com.ecom2.customer.dto.CustomerAddressDTO;
+import com.ecom2.customer.dto.CustomerDTO;
 import com.ecom2.customer.entity.Customer;
 import com.ecom2.customer.entity.CustomerAddress;
 import com.ecom2.customer.service.CustomerAddressService;
@@ -25,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class CustomerController {
 
     @Autowired
@@ -61,7 +62,7 @@ public class CustomerController {
         }
     }
 
-    @GetMapping("/api/v1/customer-address/{customerId}")
+    @GetMapping("/public/customer-address/{customerId}")
     public ResponseEntity<CustomerAddressDTO> getCustomerAddressByCustomerId(@PathVariable Long customerId) {
         return customerAddressService.findByCustomerId(customerId)
                 .map(address -> {
@@ -77,7 +78,7 @@ public class CustomerController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/api/v1/customer/{id}")
+    @GetMapping("/public/customer/{id}")
     public ResponseEntity<Optional<Customer>> getCustomerById(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.findById(id));
     }
@@ -89,7 +90,7 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/v1/add-customer")
+    @PostMapping("/public/add-customer")
     public ResponseEntity<?> signupCustomer(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phone,
@@ -146,69 +147,82 @@ public class CustomerController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 
-    @PutMapping("/api/v1/edit-customer/{customerId}")
+    @PutMapping("/public/edit-customer/{customerId}")
     public ResponseEntity<?> editCustomer(
             @PathVariable Long customerId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String phone,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String userName,
-            @RequestParam(required = false) String password,
-            @RequestParam(required = false) String gender,
-            @RequestParam(required = false) String birthdate,
-            @RequestParam(required = false) MultipartFile imageUrl,
-            @RequestParam(required = false) String address,
-//            @RequestParam(required = false) String country,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String district,
-            @RequestParam(required = false) String commune) throws IOException, ParseException {
+            CustomerDTO customerDTO) {
 
-//        if(userService.existsByUserName(userName)) return new ResponseEntity<>(new MessageResponse("Username already exists"), HttpStatus.BAD_REQUEST);
-//        if(userService.existsByEmail(email)) return new ResponseEntity<>(new MessageResponse("Email already exists"), HttpStatus.BAD_REQUEST);
-
-        Customer existingCustomer = customerService.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-        System.out.println(birthdate);
-        User existingUser = existingCustomer.getUser();
-
-        if (userName != null) existingUser.setUserName(userName);
-        if (password != null && !password.isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(password));
+        try{
+            customerService.editCustomer(customerId, customerDTO);
+            return ResponseEntity.ok("Customer updated successfully!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Error edit customer: " + e.getMessage());
         }
-        if (email != null) existingUser.setEmail(email);
-
-        User savedUser = userService.saveOrUpdate(existingUser);
-
-        if (name != null) existingCustomer.setName(name);
-        if (phone != null) existingCustomer.setPhone(phone);
-        if (gender != null) existingCustomer.setGender(gender);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        if (birthdate != null) existingCustomer.setBirthdate(dateFormat.parse(birthdate));
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            String image = cloudinaryService.uploadFile(imageUrl);
-            existingCustomer.setImageUrl(image);
-            System.out.println(image);
-        }
-
-        existingCustomer.setUser(savedUser);
-
-        Customer savedCustomer = customerService.saveCustomer(existingCustomer);
-
-        CustomerAddress existingAddress = customerAddressService.findByCustomer(savedCustomer);
-
-        if (address != null) existingAddress.setAddress(address);
-        existingAddress.setCountry("Việt Nam");
-        if (city != null) existingAddress.setCity(city);
-        if (district != null) existingAddress.setDistrict(district);
-        if (commune != null) existingAddress.setCommune(commune);
-
-        customerAddressService.saveCustomer(existingAddress);
-
-        return ResponseEntity.ok("Customer updated successfully!");
     }
+
+//    @PutMapping("/public/edit-customer/{customerId}")
+//    public ResponseEntity<?> editCustomer(
+//            @PathVariable Long customerId,
+//            @RequestParam(required = false) String name,
+//            @RequestParam(required = false) String phone,
+//            @RequestParam(required = false) String email,
+//            @RequestParam(required = false) String userName,
+//            @RequestParam(required = false) String password,
+//            @RequestParam(required = false) String gender,
+//            @RequestParam(required = false) String birthdate,
+//            @RequestParam(required = false) MultipartFile imageUrl,
+//            @RequestParam(required = false) String address,
+////            @RequestParam(required = false) String country,
+//            @RequestParam(required = false) String city,
+//            @RequestParam(required = false) String district,
+//            @RequestParam(required = false) String commune) throws IOException, ParseException {
+//
+////        if(userService.existsByUserName(userName)) return new ResponseEntity<>(new MessageResponse("Username already exists"), HttpStatus.BAD_REQUEST);
+////        if(userService.existsByEmail(email)) return new ResponseEntity<>(new MessageResponse("Email already exists"), HttpStatus.BAD_REQUEST);
+//
+//        Customer existingCustomer = customerService.findById(customerId)
+//                .orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//        System.out.println(birthdate);
+//        User existingUser = existingCustomer.getUser();
+//
+//        if (userName != null) existingUser.setUserName(userName);
+//        if (password != null && !password.isEmpty()) {
+//            existingUser.setPassword(passwordEncoder.encode(password));
+//        }
+//        if (email != null) existingUser.setEmail(email);
+//
+//        User savedUser = userService.saveOrUpdate(existingUser);
+//
+//        if (name != null) existingCustomer.setName(name);
+//        if (phone != null) existingCustomer.setPhone(phone);
+//        if (gender != null) existingCustomer.setGender(gender);
+//
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//
+//        if (birthdate != null) existingCustomer.setBirthdate(dateFormat.parse(birthdate));
+//        if (imageUrl != null && !imageUrl.isEmpty()) {
+//            String image = cloudinaryService.uploadFile(imageUrl);
+//            existingCustomer.setImageUrl(image);
+//            System.out.println(image);
+//        }
+//
+//        existingCustomer.setUser(savedUser);
+//
+//        Customer savedCustomer = customerService.saveCustomer(existingCustomer);
+//
+//        CustomerAddress existingAddress = customerAddressService.findByCustomer(savedCustomer);
+//
+//        if (address != null) existingAddress.setAddress(address);
+//        existingAddress.setCountry("Việt Nam");
+//        if (city != null) existingAddress.setCity(city);
+//        if (district != null) existingAddress.setDistrict(district);
+//        if (commune != null) existingAddress.setCommune(commune);
+//
+//        customerAddressService.saveCustomer(existingAddress);
+//
+//        return ResponseEntity.ok("Customer updated successfully!");
+//    }
 
 }
 

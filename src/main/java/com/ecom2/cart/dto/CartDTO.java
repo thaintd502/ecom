@@ -1,9 +1,8 @@
-package com.ecom2.cart;
+package com.ecom2.cart.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ecom2.cart.entity.Cart;
 import com.ecom2.product.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;

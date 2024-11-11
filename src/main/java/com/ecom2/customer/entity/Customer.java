@@ -30,10 +30,10 @@ public class Customer {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "birthdate") // Thêm cột ngày sinh
+    @Column(name = "birthdate")
     private Date birthdate;
 
-    @Column(name = "image_url") // Thêm cột đường dẫn hình ảnh
+    @Column(name = "image_url")
     private String imageUrl;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

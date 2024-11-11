@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class OrderController {
 
     @Autowired
@@ -28,11 +29,24 @@ public class OrderController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping("/admin/get-all-orders")
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        List<OrderDTO> orderDTOs = orderService.convertToOrderDTOs(orders);
-        return ResponseEntity.ok(orderDTOs);
+//    @GetMapping("/admin/get-all-orders")
+//    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+//        List<Order> orders = orderService.getAllOrders();
+//        List<OrderDTO> orderDTOs = orderService.convertToOrderDTOs(orders);
+//        return ResponseEntity.ok(orderDTOs);
+//    }
+
+    @PostMapping("/public/order-product/{cartId}/{paymentMethod}")
+    public ResponseEntity<?> orderProducts(@PathVariable Long cartId,
+                                           @PathVariable String paymentMethod,
+                                           @RequestHeader("Authorization") String token){
+//        try{
+            String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+            OrderDTO orderDTO = orderService.placeOrder(userName, cartId, paymentMethod);
+            return ResponseEntity.status(200).body(orderDTO);
+//        }catch (Exception e){
+//            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+//        }
     }
 
     @PutMapping("/admin/update-order-status/{orderId}")
@@ -45,25 +59,20 @@ public class OrderController {
         }
     }
 
-    @GetMapping("api/v1/orders/{orderId}")
-    public ResponseEntity<CustomerDTO> getOrder(@PathVariable Long orderId) {
+    @GetMapping("public/orders/{orderId}")
+    public ResponseEntity<?> getOrder(@PathVariable Long orderId,
+                                      @RequestHeader("Authorization") String token) {
 
-        Order order = orderService.findById(orderId);
-        CustomerDTO customer = new CustomerDTO();
-
-        customer.setName(order.getCustomer().getName());
-        customer.setPhone(order.getCustomer().getPhone());
-        customer.setEmail(order.getCustomer().getUser().getEmail());
-        customer.setCity(order.getAddress().getCity());
-        customer.setDistrict(order.getAddress().getDistrict());
-        customer.setCommune(order.getAddress().getCommune());
-        customer.setAddress(order.getAddress().getAddress());
-
-
-        return ResponseEntity.ok(customer);
+      try{
+          String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+          OrderDTO orderDTO = orderService.getOrderByUser(userName, orderId);
+          return ResponseEntity.ok(orderDTO);
+      }catch (Exception e){
+          return ResponseEntity.status(500).body("Error: " + e.getMessage());
+      }
     }
 
-    @GetMapping("api/v1/orders/{orderId}/details")
+    @GetMapping("public/orders/{orderId}/details")
     public ResponseEntity<List<ProductBillDTO>> getOrderDetails(@PathVariable Long orderId) {
         List<OrderItem> orderDetails = orderDetailService.getOrderDetailsByOrderId(orderId);
         if (orderDetails.isEmpty()) {
@@ -75,25 +84,31 @@ public class OrderController {
             product.setProductCode("" + x.getProduct().getProductId());
             product.setProductName(x.getProduct().getName());
             product.setQuantity(x.getQuantity());
-            product.setTotalAmount(x.getPrice());
+            product.setTotalAmount(x.getProductPrice());
             productBillDTOS.add(product);
         }
         return ResponseEntity.ok(productBillDTOS);
     }
 
-    @GetMapping("api/v1/orders/user")
+    @GetMapping("public/orders/user")
     public ResponseEntity<?> getUserOrders(@RequestHeader("Authorization") String token){
-        String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
-        if(userName == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-        }
+        try{
+            String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+            if(userName == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
 
-        List<OrderDTO> orders = orderService.getOrdersByUser(userName);
-        if(orders.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order is enmpty");
+            List<OrderDTO> orders = orderService.getOrdersByUser(userName);
+            if(orders.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order is enmpty");
+            }
+            return ResponseEntity.ok(orders);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-        return ResponseEntity.ok(orders);
     }
+
+
 
     
 }
