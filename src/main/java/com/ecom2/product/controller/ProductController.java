@@ -1,4 +1,4 @@
-package com.ecom2.product;
+package com.ecom2.product.controller;
 
 import com.ecom2.brand.Brand;
 import com.ecom2.brand.BrandService;
@@ -6,6 +6,8 @@ import com.ecom2.category.Category;
 import com.ecom2.category.CategoryService;
 import com.ecom2.cloudinary.CloudinaryService;
 import com.ecom2.product.dto.ProductDTO;
+import com.ecom2.product.entity.Product;
+import com.ecom2.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")

@@ -1,4 +1,4 @@
-package com.ecom2.product;
+package com.ecom2.product.entity;
 
 import com.ecom2.brand.Brand;
 import com.ecom2.category.Category;

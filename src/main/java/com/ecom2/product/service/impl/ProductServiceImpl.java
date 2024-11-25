@@ -1,11 +1,12 @@
-package com.ecom2.product;
+package com.ecom2.product.service.impl;
 
-import com.ecom2.brand.Brand;
 import com.ecom2.brand.BrandRepository;
-import com.ecom2.category.Category;
 import com.ecom2.category.CategoryRepository;
 import com.ecom2.cloudinary.CloudinaryService;
 import com.ecom2.product.dto.ProductDTO;
+import com.ecom2.product.entity.Product;
+import com.ecom2.product.repository.ProductRepository;
+import com.ecom2.product.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;

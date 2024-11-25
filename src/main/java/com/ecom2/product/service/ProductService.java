@@ -1,6 +1,7 @@
-package com.ecom2.product;
+package com.ecom2.product.service;
 
 import com.ecom2.product.dto.ProductDTO;
+import com.ecom2.product.entity.Product;
 
 import java.util.List;
 import java.util.Optional;

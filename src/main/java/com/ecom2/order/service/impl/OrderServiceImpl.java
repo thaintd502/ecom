@@ -1,7 +1,6 @@
 package com.ecom2.order.service.impl;
 
 import com.ecom2.cart.CartService;
-import com.ecom2.cart.dto.CartItemDTO;
 import com.ecom2.cart.entity.Cart;
 import com.ecom2.cart.entity.CartItem;
 import com.ecom2.cart.repository.CartRepository;
@@ -19,15 +18,13 @@ import com.ecom2.order.repository.OrderRepository;
 import com.ecom2.order.service.OrderService;
 import com.ecom2.payment.Payment;
 import com.ecom2.payment.PaymentRepository;
-import com.ecom2.product.Product;
-import com.ecom2.product.ProductRepository;
-import com.ecom2.product.dto.ProductDTO;
+import com.ecom2.product.entity.Product;
+import com.ecom2.product.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

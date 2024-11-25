@@ -8,14 +8,13 @@ import com.ecom2.cart.repository.CartItemRepository;
 import com.ecom2.cart.repository.CartRepository;
 import com.ecom2.exception.APIException;
 import com.ecom2.exception.ResourceNotFoundException;
-import com.ecom2.product.Product;
-import com.ecom2.product.ProductService;
+import com.ecom2.product.entity.Product;
+import com.ecom2.product.service.ProductService;
 import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.user.entity.User;
 import com.ecom2.user.service.UserService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

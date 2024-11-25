@@ -1,6 +1,6 @@
 package com.ecom2.order.entity;
 
-import com.ecom2.product.Product;
+import com.ecom2.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 
