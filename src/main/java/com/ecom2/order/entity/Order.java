@@ -52,22 +52,5 @@ public class Order {
     @JoinColumn(name = "product_branch_link_id", referencedColumnName = "id")
     private ProductBranchLinks productBranchLink;
 
-//    public double getTotalAmount() {
-//
-//        double sum = 0;
-//
-//        for (OrderItem x : orderItems){
-//            sum += x.getProductPrice();
-//        }
-//
-//        return sum;
-//    }
-//
-//    public double getShippingFee() {
-//        double sum = 0;
-//
-//        return sum;
-//    }
-
 }
 

@@ -76,6 +76,7 @@ public class UserServiceImpl implements UserService {
             });
         }
         user.setListRoles(listRoles);
+
         return user;
     }
 

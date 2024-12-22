@@ -18,5 +18,4 @@ public class Role {
     @Column(name = "name", length = 50, unique = true, nullable = false)
     private ERole roleName;
 
-    // Getters and Setters (Omitted for brevity)
 }

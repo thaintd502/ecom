@@ -7,6 +7,8 @@ import com.ecom2.auth.payload.request.SignupRequest;
 import com.ecom2.auth.payload.response.JwtResponse;
 import com.ecom2.auth.payload.response.MessageResponse;
 import com.ecom2.auth.security.CustomUserDetail;
+import com.ecom2.customer.entity.Customer;
+import com.ecom2.customer.service.CustomerService;
 import com.ecom2.role.ERole;
 import com.ecom2.role.Role;
 import com.ecom2.role.RoleService;
@@ -37,6 +39,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final OTPService otpService;
+    private final CustomerService customerService;
 
     @PostMapping("/public/signin")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
@@ -56,6 +59,11 @@ public class UserController {
         if(userService.existsByEmail(request.getEmail())) return new ResponseEntity<>(new MessageResponse("Email already exists"), HttpStatus.BAD_REQUEST);
         User user = userService.signUp(request);
         userService.saveOrUpdate(user);
+
+        Customer customer = new Customer();
+        customer.setUser(user);
+        customerService.saveCustomer(customer);
+
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 

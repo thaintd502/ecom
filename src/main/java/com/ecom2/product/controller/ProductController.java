@@ -119,6 +119,7 @@ public class ProductController {
             product.setImportQuantity(Integer.parseInt(importQuantity));
             product.setDescription(description);
             product.setImageUrl(cloudinaryService.uploadFile(imageUrl));
+            product.setSold(0);
 
             Brand brandSave = brandService.findByName(brand);
             product.setBrand(brandSave);

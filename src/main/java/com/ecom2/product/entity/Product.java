@@ -54,7 +54,7 @@ public class Product {
     private String imageUrl;
 
     @Column
-    private int sold;
+    private int sold = 0;
 
     @ManyToMany
     @JoinTable(
