@@ -1,6 +1,8 @@
 package com.ecom2.product.repository;
 
 import com.ecom2.product.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,4 +22,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> searchProductsByKeyword(String keyword);
 
     List<Product> findByDiscountGreaterThan(int discount);
+    Page<Product> findAll(Pageable pageable);
 }

@@ -3,12 +3,15 @@ package com.ecom2.product.service.impl;
 import com.ecom2.brand.BrandRepository;
 import com.ecom2.category.CategoryRepository;
 import com.ecom2.cloudinary.CloudinaryService;
+import com.ecom2.product.dto.PageResponse;
 import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.product.entity.Product;
 import com.ecom2.product.repository.ProductRepository;
 import com.ecom2.product.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,12 +39,25 @@ public class ProductServiceImpl implements ProductService {
         this.modelMapper = modelMapper;
     }
 
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        List<ProductDTO> productDTOS = products.stream().
-                map(p -> modelMapper.map(p, ProductDTO.class))
-                .collect(Collectors.toList());
-        return productDTOS;
+    public PageResponse<List<ProductDTO>> getAllProducts(Pageable pageable) {
+//        List<Product> products = productRepository.findAll();
+
+//        List<ProductDTO> productDTOS = products.stream().
+//                map(p -> modelMapper.map(p, ProductDTO.class))
+//                .collect(Collectors.toList());
+//        return productDTOS;
+        Page<Product> productPage = productRepository.findAll(pageable);
+        List<ProductDTO> productDTOS = productPage.getContent().stream()
+                .map(p -> modelMapper.map(p, ProductDTO.class))
+                .toList();
+//        return productPage.map(product -> modelMapper.map(product, ProductDTO.class));
+
+        return new PageResponse<>(
+                productPage.getSize(),
+                productPage.getNumber(),
+                productPage.getTotalPages(),
+                productDTOS
+        );
     }
 
 //    public void addProduct(ProductDTO productAddDTO) {

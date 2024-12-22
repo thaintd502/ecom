@@ -5,10 +5,14 @@ import com.ecom2.brand.BrandService;
 import com.ecom2.category.Category;
 import com.ecom2.category.CategoryService;
 import com.ecom2.cloudinary.CloudinaryService;
+import com.ecom2.product.dto.PageResponse;
 import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.product.entity.Product;
 import com.ecom2.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,9 +47,14 @@ public class ProductController {
     }
 
     @GetMapping("public/products")
-    public ResponseEntity<?> getAllProducts() {
-        List<ProductDTO> productDTOs = productService.getAllProducts();
-        return ResponseEntity.ok(productDTOs);
+    public ResponseEntity<PageResponse<List<ProductDTO>>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+//        List<ProductDTO> productDTOs = productService.getAllProducts();
+//        return ResponseEntity.ok(productDTOs);
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<List<ProductDTO>> response = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(response);
     }
 //
 //    private ProductDTO convertToProductDTO(Product product) {
