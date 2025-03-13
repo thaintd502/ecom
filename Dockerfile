@@ -1,5 +1,16 @@
+FROM maven:3-openjdk-17 AS build
+WORKDIR /app
+
+COPY . .
+RUN mvn clean package -DskipTests
+
+
+# Run stage
+
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY target/ecom2-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 9090
-CMD ["java", "-jar", "app.jar"]
+
+COPY --from=build /app/target/DrComputer-0.0.1-SNAPSHOT.war drcomputer.war
+EXPOSE 9090 
+
+ENTRYPOINT ["java", "-jar", "drcomputer.war"]
