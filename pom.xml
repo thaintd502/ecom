@@ -31,6 +31,15 @@
 	</properties>
 	<dependencies>
 
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope> <!-- Chỉ chạy ở môi trường phát triển -->
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

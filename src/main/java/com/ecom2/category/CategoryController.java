@@ -1,5 +1,6 @@
 package com.ecom2.category;
 
+import com.ecom2.product.dto.PageResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,16 @@ public class CategoryController {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/admin/search-categories")
+    public ResponseEntity<PageResponse<List<CategoryDTO>>> searchCategories(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction) {
+        PageResponse<List<CategoryDTO>> response = categoryService.searchCategories(keyword, page, size, sort, direction);
+        return ResponseEntity.ok(response);
     }
 }

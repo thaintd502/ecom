@@ -1,8 +1,12 @@
 package com.ecom2.customer.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CustomerAddressDTO {
     private long addressId;
     private String address;

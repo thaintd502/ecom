@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,5 +27,7 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
 
     Optional<CustomerAddress> findByCustomer_CustomerId(Long customerId);
     Optional<CustomerAddress> findByCustomer(Customer customer);
+    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.customer.customerId = :customerId")
+    List<CustomerAddress> findAddressesByCustomerId(Long customerId);
 
 }

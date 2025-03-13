@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/public")
 public class CommentController {
@@ -21,6 +23,12 @@ public class CommentController {
     public ResponseEntity<?> getAverageRating(@PathVariable Long productId){
         Double averageRating = commentService.getAverageRatingForProduct(productId);
         return ResponseEntity.status(200).body(averageRating);
+    }
+
+    @GetMapping("/comments/{productId}")
+    public ResponseEntity<List<Comment>> getCommentsByProductId(@PathVariable Long productId) {
+        List<Comment> comments = commentService.getCommentsByProductId(productId);
+        return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/add-comment")

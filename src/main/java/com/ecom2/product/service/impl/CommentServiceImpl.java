@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -67,5 +68,10 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         return comment;
+    }
+
+    @Override
+    public List<Comment> getCommentsByProductId(Long productId) {
+        return commentRepository.findByProduct_ProductId(productId);
     }
 }

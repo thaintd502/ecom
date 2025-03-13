@@ -52,5 +52,13 @@ public class Order {
     @JoinColumn(name = "product_branch_link_id", referencedColumnName = "id")
     private ProductBranchLinks productBranchLink;
 
+    public double setTotalAmount(){
+        double sum = 0;
+        for(OrderItem x : orderItems){
+            sum += x.getProductPrice() * x.getQuantity() * (1 - x.getDiscount()/100);
+        }
+        return sum;
+    }
+
 }
 

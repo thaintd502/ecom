@@ -8,6 +8,8 @@ import com.ecom2.auth.payload.response.JwtResponse;
 import com.ecom2.auth.payload.response.MessageResponse;
 import com.ecom2.auth.security.CustomUserDetail;
 import com.ecom2.customer.entity.Customer;
+import com.ecom2.customer.entity.CustomerAddress;
+import com.ecom2.customer.service.CustomerAddressService;
 import com.ecom2.customer.service.CustomerService;
 import com.ecom2.role.ERole;
 import com.ecom2.role.Role;
@@ -40,6 +42,7 @@ public class UserController {
     private final RoleService roleService;
     private final OTPService otpService;
     private final CustomerService customerService;
+    private final CustomerAddressService customerAddressService;
 
     @PostMapping("/public/signin")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
@@ -62,7 +65,13 @@ public class UserController {
 
         Customer customer = new Customer();
         customer.setUser(user);
+        customer.setName(request.getName());
+        customer.setPhone(request.getPhoneNumber());
         customerService.saveCustomer(customer);
+
+        CustomerAddress customerAddress = new CustomerAddress();
+        customerAddress.setCustomer(customer);
+        customerAddressService.saveCustomer(customerAddress);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }

@@ -3,11 +3,18 @@ package com.ecom2.brand;
 import com.ecom2.cloudinary.CloudinaryService;
 import com.ecom2.exception.APIException;
 import com.ecom2.exception.ResourceNotFoundException;
+import com.ecom2.product.dto.PageResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandServiceImpl implements BrandService{
@@ -26,6 +33,13 @@ public class BrandServiceImpl implements BrandService{
     @Override
     public Brand findByName(String name) {
         return brandRepository.findByName(name);
+    }
+
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    public BrandServiceImpl(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -64,5 +78,22 @@ public class BrandServiceImpl implements BrandService{
     @Override
     public void deleteBrand(Long brandId) {
         brandRepository.deleteById(brandId);
+    }
+
+    @Override
+    public PageResponse<List<BrandDTO>> searchBrands(String keyword, int page, int size, String sort, String direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort));
+        Page<Brand> brandPage= brandRepository.searchBrands(keyword, pageable);
+
+        List<BrandDTO> brandDTOS = brandPage.getContent().stream()
+                .map(brand -> modelMapper.map(brand, BrandDTO.class))
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                brandPage.getSize(),
+                brandPage.getNumber(),
+                brandPage.getTotalPages(),
+                brandDTOS
+        );
     }
 }

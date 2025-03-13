@@ -15,6 +15,7 @@ public interface CustomerService {
 //    Boolean existsByEmail(String email);
 
 //    void signUp(CustomerDTO customerSignup);
+
     Customer saveCustomer(Customer customer);
     List<Customer> getAllCustomers();
     void deleteCustomer(Long customerId);
@@ -23,4 +24,5 @@ public interface CustomerService {
     void deleteUserAndRelatedEntities(int userId);
     Customer findByUserName(String userName);
     void editCustomer(Long customerId, CustomerDTO customerDTO) throws ParseException, IOException;
+    Customer findByAddressId(Long addressId);
 }

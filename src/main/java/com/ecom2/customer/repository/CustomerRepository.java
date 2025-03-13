@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
@@ -15,4 +17,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Customer findByUserId(int userId);
     @Query("SELECT c FROM Customer c WHERE c.user.userName = :userName")
     Customer findByUserName(String userName);
+    @Query("SELECT c FROM Customer c JOIN c.addresses a WHERE a.addressId = :addressId")
+    Customer findByAddressId(Long addressId);
+
 }

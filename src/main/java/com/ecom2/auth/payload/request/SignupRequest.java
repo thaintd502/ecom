@@ -14,9 +14,8 @@ public class SignupRequest {
     private String password;
     private String email;
     private String phoneNumber;
+    private String name;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date created;
-    private byte gender;
-    private String address;
     private Set<String> listRoles;
 }

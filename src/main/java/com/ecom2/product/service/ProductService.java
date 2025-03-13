@@ -20,4 +20,5 @@ public interface ProductService {
     List<Product> getProductsByCategoryId(Long categoryId);
     List<Product> searchProductsByKeyword(String keyword);
     List<Product> getDiscountedProducts();
+    ProductDTO findProductById(Long productId);
 }

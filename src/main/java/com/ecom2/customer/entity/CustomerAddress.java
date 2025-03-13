@@ -1,18 +1,22 @@
 package com.ecom2.customer.entity;
 
-import lombok.Data;
+import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customer_address")
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomerAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Long addressId;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
     @Column(name = "commune")

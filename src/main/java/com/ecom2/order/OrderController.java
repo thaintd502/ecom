@@ -29,25 +29,38 @@ public class OrderController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-//    @GetMapping("/admin/get-all-orders")
-//    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-//        List<Order> orders = orderService.getAllOrders();
-//        List<OrderDTO> orderDTOs = orderService.convertToOrderDTOs(orders);
-//        return ResponseEntity.ok(orderDTOs);
+    @GetMapping("/admin/get-all-orders")
+    public ResponseEntity<?> getAllOrders() {
+        List<OrderDTO> orderDTOS = orderService.getAllOrders();
+        return ResponseEntity.ok(orderDTOS);
+    }
+
+//    @PostMapping("/public/order-product/{cartId}/{paymentMethod}")
+//    public ResponseEntity<?> orderProducts(@PathVariable Long cartId,
+//                                           @PathVariable String paymentMethod,
+//                                           @RequestHeader("Authorization") String token){
+////        try{
+//            String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+//            OrderDTO orderDTO = orderService.placeOrder(userName, cartId, paymentMethod);
+//            return ResponseEntity.status(200).body(orderDTO);
+////        }catch (Exception e){
+////            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+////        }
 //    }
 
-    @PostMapping("/public/order-product/{cartId}/{paymentMethod}")
-    public ResponseEntity<?> orderProducts(@PathVariable Long cartId,
-                                           @PathVariable String paymentMethod,
-                                           @RequestHeader("Authorization") String token){
-//        try{
-            String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
-            OrderDTO orderDTO = orderService.placeOrder(userName, cartId, paymentMethod);
-            return ResponseEntity.status(200).body(orderDTO);
-//        }catch (Exception e){
-//            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-//        }
+    @PostMapping("/public/order")
+    public ResponseEntity<OrderDTO> placeOrder(
+            @RequestHeader("Authorization") String token,
+            @RequestParam String paymentMethod,
+            @RequestParam Long addressId) {
+
+        String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+        OrderDTO orderDTO = orderService.placeOrder(userName, paymentMethod, addressId);
+
+        return ResponseEntity.ok(orderDTO);
     }
+
+
 
     @PutMapping("/admin/update-order-status/{orderId}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestParam String status) {

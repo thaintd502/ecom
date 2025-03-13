@@ -5,6 +5,8 @@ import com.ecom2.cart.entity.Cart;
 import com.ecom2.cart.entity.CartItem;
 import com.ecom2.cart.repository.CartRepository;
 import com.ecom2.customer.entity.Customer;
+import com.ecom2.customer.entity.CustomerAddress;
+import com.ecom2.customer.service.CustomerAddressService;
 import com.ecom2.customer.service.CustomerService;
 import com.ecom2.exception.APIException;
 import com.ecom2.exception.ResourceNotFoundException;
@@ -18,8 +20,10 @@ import com.ecom2.order.repository.OrderRepository;
 import com.ecom2.order.service.OrderService;
 import com.ecom2.payment.Payment;
 import com.ecom2.payment.PaymentRepository;
+import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.product.entity.Product;
 import com.ecom2.product.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +60,9 @@ public class OrderServiceImpl implements OrderService {
     private CartService cartService;
 
     @Autowired
+    private CustomerAddressService customerAddressService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -63,8 +70,25 @@ public class OrderServiceImpl implements OrderService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderDTO> getAllOrders() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Order> orders = orderRepository.findAll();
+        List<OrderDTO> orderDTOS = orders.stream()
+                .map(order -> {
+                    OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
+
+                    List<OrderItemDTO> orderItemDTOS = order.getOrderItems().stream()
+                            .map(o -> modelMapper.map(o, OrderItemDTO.class))
+                            .collect(Collectors.toList());
+                    orderDTO.setOrderItems(orderItemDTOS);
+
+                    return orderDTO;
+
+                })
+                .collect(Collectors.toList());
+
+        return orderDTOS;
     }
 
 //    public List<OrderDTO> convertToOrderDTOs(List<Order> orders) {
@@ -100,7 +124,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getOrdersByUser(String userName) {
-
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
         Customer customer = customerService.findByUserName(userName);
         if(customer == null){
             throw new ResourceNotFoundException("Customer", "userName", userName);
@@ -122,83 +147,130 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO placeOrder(String userName, Long cartId, String paymentMethod) {
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-        Cart cart = cartRepository.findCartByUserNameAndCartId(userName, cartId);
-        if(cart == null){
-            throw new ResourceNotFoundException("Cart", "cartId", cartId);
+    @Transactional
+    public OrderDTO placeOrder(String userName, String paymentMethod, Long addressId) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        // Lấy Cart dựa trên userName
+        Cart cart = cartRepository.findByUser_UserName(userName);
+        if (cart == null || cart.getCartItems().isEmpty()) {
+            throw new APIException("Cart is empty or not found");
         }
 
         Order order = new Order();
-
         order.setStatus(EStatus.PENDING.toString());
         order.setOrderDate(new Date());
         order.setTotalAmount(cart.getTotalPrice());
+        order.setCustomer(customerService.findByAddressId(addressId));
+        order.setAddress(customerAddressService.findById(addressId));
 
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setPaymentMethod(paymentMethod);
 
         paymentRepository.save(payment);
-
         order.setPayment(payment);
 
-        Order saveOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        List<CartItem> cartItems = cart.getCartItems();
-
-        if(cartItems.size() == 0){
-            throw new APIException("Cart is empty");
-        }
-
-        List<OrderItem> orderItems = new ArrayList<>();
-
-        for(CartItem x : cartItems){
+        List<OrderItem> orderItems = cart.getCartItems().stream().map(cartItem -> {
             OrderItem orderItem = new OrderItem();
-
-            orderItem.setProduct(x.getProduct());
-            orderItem.setOrder(saveOrder);
-            orderItem.setQuantity(x.getQuantity());
-            orderItem.setDiscount(x.getDiscount());
-            orderItem.setProductPrice(x.getProductPrice());
-
-            orderItems.add(orderItem);
-        }
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setOrder(savedOrder);
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setDiscount(cartItem.getDiscount());
+            orderItem.setProductPrice(cartItem.getProductPrice());
+            return orderItem;
+        }).collect(Collectors.toList());
 
         orderItemRepository.saveAll(orderItems);
-//        saveOrder.setOrderItems(orderItems);
-
-        cart.getCartItems().forEach(item -> {
+        List<CartItem> cartItems = new ArrayList<>(cart.getCartItems());
+        for(CartItem item : cartItems){
             int quantity = item.getQuantity();
-
             Product product = item.getProduct();
 
-            cartService.deleteCartItemByProductIdAndCartId(cartId, item.getProduct().getProductId());
+            cartService.deleteCartItemById(item.getCartItemId());
+            cart.getCartItems().remove(item); // Cập nhật lại collection trong Cart
+            System.out.println(item.getCartItemId());
 
             product.setStockQuantity(product.getStockQuantity() - quantity);
             product.setSold(product.getSold() + quantity);
-
             productRepository.save(product);
-        });
+        }
+        cart.setTotalPrice(0);
+        cartRepository.save(cart); // Lưu lại giỏ hàng để cập nhật collection
 
-        OrderDTO orderDTO = modelMapper.map(saveOrder, OrderDTO.class);
-
+        OrderDTO orderDTO = modelMapper.map(savedOrder, OrderDTO.class);
         orderItems.forEach(item -> orderDTO.getOrderItems().add(modelMapper.map(item, OrderItemDTO.class)));
 
         return orderDTO;
     }
 
-
-//    private OrderDTO convertToOrderDTO(Order order) {
-//        OrderDTO orderDTO = new OrderDTO();
-//        orderDTO.setOrderId(order.getOrderId());
-//        orderDTO.setCustomerName(order.getCustomer().getName());
-//        orderDTO.setCustomerPhone(order.getCustomer().getPhone());
-//        orderDTO.setOrderDate(order.getOrderDate());
-//        orderDTO.setTotalAmount(order.getTotalAmount());
-////        orderDTO.setShippingFee(order.getShippingFee());
-//        orderDTO.setStatus(order.getStatus());
+//    @Override
+//    public OrderDTO placeOrder(String userName, Long cartId, String paymentMethod) {
+//        modelMapper.getConfiguration()
+//                .setMatchingStrategy(MatchingStrategies.STRICT);
+//        Cart cart = cartRepository.findCartByUserNameAndCartId(userName, cartId);
+//        if(cart == null){
+//            throw new ResourceNotFoundException("Cart", "cartId", cartId);
+//        }
+//
+//        Order order = new Order();
+//
+//        order.setStatus(EStatus.PENDING.toString());
+//        order.setOrderDate(new Date());
+//        order.setTotalAmount(cart.getTotalPrice());
+//
+//        Payment payment = new Payment();
+//        payment.setOrder(order);
+//        payment.setPaymentMethod(paymentMethod);
+//
+//        paymentRepository.save(payment);
+//
+//        order.setPayment(payment);
+//
+//        Order saveOrder = orderRepository.save(order);
+//
+//        List<CartItem> cartItems = cart.getCartItems();
+//
+//        if(cartItems.size() == 0){
+//            throw new APIException("Cart is empty");
+//        }
+//
+//        List<OrderItem> orderItems = new ArrayList<>();
+//
+//        for(CartItem x : cartItems){
+//            OrderItem orderItem = new OrderItem();
+//
+//            orderItem.setProduct(x.getProduct());
+//            orderItem.setOrder(saveOrder);
+//            orderItem.setQuantity(x.getQuantity());
+//            orderItem.setDiscount(x.getDiscount());
+//            orderItem.setProductPrice(x.getProductPrice());
+//
+//            orderItems.add(orderItem);
+//        }
+//
+//        orderItemRepository.saveAll(orderItems);
+////        saveOrder.setOrderItems(orderItems);
+//
+//        cart.getCartItems().forEach(item -> {
+//            int quantity = item.getQuantity();
+//
+//            Product product = item.getProduct();
+//
+//            cartService.deleteCartItemByProductIdAndCartId(cartId, item.getProduct().getProductId());
+//
+//            product.setStockQuantity(product.getStockQuantity() - quantity);
+//            product.setSold(product.getSold() + quantity);
+//
+//            productRepository.save(product);
+//        });
+//
+//        OrderDTO orderDTO = modelMapper.map(saveOrder, OrderDTO.class);
+//
+//        orderItems.forEach(item -> orderDTO.getOrderItems().add(modelMapper.map(item, OrderItemDTO.class)));
+//
 //        return orderDTO;
 //    }
 }

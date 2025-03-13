@@ -1,5 +1,6 @@
 package com.ecom2.customer;
 
+import com.ecom2.auth.jwt.JwtTokenProvider;
 import com.ecom2.auth.payload.response.MessageResponse;
 import com.ecom2.cloudinary.CloudinaryService;
 import com.ecom2.customer.dto.CustomerAddressDTO;
@@ -46,6 +47,10 @@ public class CustomerController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+
     @GetMapping("/admin/get-all-customers")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
@@ -60,6 +65,42 @@ public class CustomerController {
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to delete customer. Reason: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/public/customer-address")
+    public ResponseEntity<?> getCustomerAddressByUserName(@RequestHeader("Authorization") String token) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing Authorization token");
+        }
+
+        String userName;
+        try {
+            userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        if (userName == null || userName.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user in token");
+        }
+
+        Customer customer = customerService.findByUserName(userName);
+        if (customer == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found");
+        }
+
+        return customerAddressService.findByCustomerId(customer.getCustomerId())
+                .map(address -> {
+                    CustomerAddressDTO dto = new CustomerAddressDTO();
+                    dto.setAddressId(address.getAddressId());
+                    dto.setAddress(address.getAddress());
+                    dto.setCommune(address.getCommune());
+                    dto.setDistrict(address.getDistrict());
+                    dto.setCity(address.getCity());
+                    dto.setCountry(address.getCountry());
+                    return ResponseEntity.ok(dto);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/public/customer-address/{customerId}")
@@ -77,6 +118,8 @@ public class CustomerController {
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+
 
     @GetMapping("/public/customer/{id}")
     public ResponseEntity<Optional<Customer>> getCustomerById(@PathVariable Long id) {
@@ -158,6 +201,13 @@ public class CustomerController {
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Error edit customer: " + e.getMessage());
         }
+    }
+
+    @PostMapping("public/save-customer-address")
+    public ResponseEntity<?> saveCustomerAddress(
+           @RequestBody CustomerAddressDTO customerAddressDTO){
+        customerAddressService.editCustomerAddress(customerAddressDTO);
+        return ResponseEntity.ok(customerAddressDTO);
     }
 
 //    @PutMapping("/public/edit-customer/{customerId}")

@@ -95,6 +95,10 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer findByUserName(String userName) {
         return customerRepository.findByUserName(userName);
     }
+    @Override
+    public Customer findByAddressId(Long addressId){
+        return customerRepository.findByAddressId(addressId);
+    }
 
     @Override
     public void editCustomer(Long customerId, CustomerDTO customerDTO) throws ParseException, IOException{
@@ -139,6 +143,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerAddressRepository.save(existingAddress);
     }
+
+
 
 
 //    @Override

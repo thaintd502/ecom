@@ -2,6 +2,7 @@ package com.ecom2.brand;
 
 import com.ecom2.category.Category;
 import com.ecom2.category.CategoryDTO;
+import com.ecom2.product.dto.PageResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,17 @@ public class BrandController {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
+    }
+
+    @GetMapping("admin/search-brands")
+    public ResponseEntity<?> searchBrands(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction){
+        PageResponse<List<BrandDTO>> response = brandService.searchBrands(keyword, page, size, sort, direction);
+        return ResponseEntity.ok(response);
     }
 
 

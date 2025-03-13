@@ -12,7 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,6 +118,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getDiscountedProducts() {
         return productRepository.findByDiscountGreaterThan(0);
+    }
+
+    @Override
+    public ProductDTO findProductById(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sản phẩm không tồn tại"));
+        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+        return productDTO;
     }
 
 

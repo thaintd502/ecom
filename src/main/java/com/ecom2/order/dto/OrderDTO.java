@@ -17,5 +17,6 @@ public class OrderDTO {
     private CustomerAddressDTO address;
     private Date orderDate;
     private String status;
+    private double totalAmount;
     private List<OrderItemDTO> orderItems = new ArrayList<>();
 }

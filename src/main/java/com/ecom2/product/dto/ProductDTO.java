@@ -1,6 +1,7 @@
 package com.ecom2.product.dto;
 
 import com.ecom2.brand.Brand;
+import com.ecom2.brand.BrandDTO;
 import com.ecom2.category.Category;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class ProductDTO {
 
     private Long productId;
     private String name;
-    private String brand;
+    private Brand brand;
     private double price;
     private double promotePrice;
     private double importPrice;

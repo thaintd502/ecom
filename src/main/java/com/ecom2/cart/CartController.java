@@ -53,12 +53,12 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
 
-        List<CartDTO> cartDTOS = cartService.getAllCarts(userName);
-        if(cartDTOS.isEmpty()){
+        List<CartItemDTO> cartItemDTOS = cartService.viewCart(userName);
+        if(cartItemDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart is empty");
         }
 
-        return ResponseEntity.ok(cartDTOS);
+        return ResponseEntity.ok(cartItemDTOS);
     }
 
     @PutMapping("/carts/update-product-quantity")
@@ -72,17 +72,29 @@ public class CartController {
         }
     }
 
-    @DeleteMapping("/carts/delete-cart-item/{cartId}/{productId}")
-    public ResponseEntity<?> deleteCartItemByCartIdAndProductId(@PathVariable Long cartId,
-                                                                @PathVariable Long productId){
-        try{
-            cartService.deleteCartItemByProductIdAndCartId(cartId, productId);
+    @DeleteMapping("/carts/delete-cart-item/{cartItemId}")
+    public ResponseEntity<?> deleteCartItemById(@PathVariable Long cartItemId) {
+        try {
+            cartService.deleteCartItemById(cartItemId);
             return ResponseEntity.ok("Cart item deleted successfully.");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting cart item: " + e.getMessage());
         }
     }
+
+
+//    @DeleteMapping("/carts/delete-cart-item/{cartId}/{productId}")
+//    public ResponseEntity<?> deleteCartItemByCartIdAndProductId(@PathVariable Long cartId,
+//                                                                @PathVariable Long productId){
+//        try{
+//            cartService.deleteCartItemByProductIdAndCartId(cartId, productId);
+//            return ResponseEntity.ok("Cart item deleted successfully.");
+//        }catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Error deleting cart item: " + e.getMessage());
+//        }
+//    }
 
 
 
