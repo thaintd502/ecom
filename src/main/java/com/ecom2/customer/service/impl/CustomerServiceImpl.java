@@ -14,6 +14,7 @@ import com.ecom2.role.RoleService;
 import com.ecom2.user.entity.User;
 import com.ecom2.user.service.UserService;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
 //    public Customer saveCustomer(Customer customer) {
 //        return customerRepository.save(customer);
@@ -98,6 +103,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByAddressId(Long addressId){
         return customerRepository.findByAddressId(addressId);
+    }
+
+    @Override
+    public CustomerDTO findByUserName2(String userName) {
+        Customer customer = customerRepository.findByUserName(userName);
+        CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
+        customerDTO.setEmail(customer.getUser().getEmail());
+        customerDTO.setPhone(customer.getPhone());
+        customerDTO.setImage(customer.getImageUrl());
+        return customerDTO;
     }
 
     @Override

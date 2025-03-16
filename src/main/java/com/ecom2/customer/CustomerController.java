@@ -126,6 +126,12 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.findById(id));
     }
 
+    @GetMapping("/public/customer")
+    public ResponseEntity<?> getCustomerByUserName(@RequestHeader("Authorization") String token) {
+        String userName = jwtTokenProvider.getUserNameFromJwt(token.substring(7));
+        return ResponseEntity.ok(customerService.findByUserName2(userName));
+    }
+
     @DeleteMapping("/admin/delete-user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         customerService.deleteUserAndRelatedEntities(id);

@@ -4,6 +4,7 @@ import com.ecom2.auth.payload.request.SignupRequest;
 import com.ecom2.role.ERole;
 import com.ecom2.role.Role;
 import com.ecom2.role.RoleService;
+import com.ecom2.user.repository.OTPRepository;
 import com.ecom2.user.repository.UserRepository;
 import com.ecom2.user.entity.User;
 import com.ecom2.user.service.UserService;
@@ -20,6 +21,8 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OTPRepository otpRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -102,13 +105,19 @@ public class UserServiceImpl implements UserService {
 
 
     public void sendOtpEmail(String to, String otp) {
+        String userName = otpRepository.findByOtpCode(otp).getUser().getUserName();
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
-        message.setSubject("Your OTP for Password Reset");
-        message.setText("Your OTP is: " + otp);
+        message.setSubject("Mã OTP phục hồi mật khẩu");
+        message.setText( "KHÔNG GỬI OTP cho bất kỳ ai.\n" +
+                "Để phục hồi mật khẩu cho tài khoản: " + userName + "\n" +
+                "Mã OTP của bạn là: " + otp + "\n" +
+                "Liên hệ: public.net.vn@gmail.com");
 
         mailSender.send(message);
     }
+
 
     @Override
     public boolean changePassword(String username, String oldPassword, String newPassword) {

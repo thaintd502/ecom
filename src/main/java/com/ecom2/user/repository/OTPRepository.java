@@ -11,4 +11,5 @@ public interface OTPRepository extends JpaRepository<OTP, Integer> {
     void deleteByUser(User user);
     Optional<OTP> findByUser(User user);
     Optional<OTP> findByUserAndVerified(User user, boolean verified);
+    OTP findByOtpCode(String otpCode);
 }

@@ -66,7 +66,7 @@ public class UserController {
         Customer customer = new Customer();
         customer.setUser(user);
         customer.setName(request.getName());
-        customer.setPhone(request.getPhoneNumber());
+        customer.setPhone(request.getPhone());
         customerService.saveCustomer(customer);
 
         CustomerAddress customerAddress = new CustomerAddress();

@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 public class CustomerDTO {
 
+    private long customerId;
     private String userName;
     private String password;
     private String email;
@@ -28,5 +29,7 @@ public class CustomerDTO {
     private String city;
     private String district;
     private String commune;
+
+    private String image;
 
 }

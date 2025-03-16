@@ -25,4 +25,6 @@ public interface CustomerService {
     Customer findByUserName(String userName);
     void editCustomer(Long customerId, CustomerDTO customerDTO) throws ParseException, IOException;
     Customer findByAddressId(Long addressId);
+    CustomerDTO findByUserName2(String userName);
+
 }

@@ -13,7 +13,7 @@ public class SignupRequest {
     private String userName;
     private String password;
     private String email;
-    private String phoneNumber;
+    private String phone;
     private String name;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date created;
