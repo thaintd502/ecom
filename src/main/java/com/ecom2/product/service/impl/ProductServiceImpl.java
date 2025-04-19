@@ -8,18 +8,23 @@ import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.product.entity.Product;
 import com.ecom2.product.repository.ProductRepository;
 import com.ecom2.product.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
+//@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -34,33 +39,56 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     CloudinaryService cloudinaryService;
 
+
     private final ModelMapper modelMapper;
 
+    private final RedisTemplate redisTemplate;
     @Autowired
-    public ProductServiceImpl(ModelMapper modelMapper) {
+    public ProductServiceImpl(ModelMapper modelMapper, RedisTemplate redisTemplate) {
         this.modelMapper = modelMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     public PageResponse<List<ProductDTO>> getAllProducts(Pageable pageable) {
-//        List<Product> products = productRepository.findAll();
+        String redisKey = "products:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize();
 
-//        List<ProductDTO> productDTOS = products.stream().
-//                map(p -> modelMapper.map(p, ProductDTO.class))
-//                .collect(Collectors.toList());
-//        return productDTOS;
+        PageResponse<List<ProductDTO>> cached = (PageResponse<List<ProductDTO>>) redisTemplate.opsForValue().get(redisKey);
+        if (cached != null) {
+            return cached;
+        }
+
         Page<Product> productPage = productRepository.findAll(pageable);
         List<ProductDTO> productDTOS = productPage.getContent().stream()
                 .map(p -> modelMapper.map(p, ProductDTO.class))
                 .toList();
-//        return productPage.map(product -> modelMapper.map(product, ProductDTO.class));
 
-        return new PageResponse<>(
+        PageResponse<List<ProductDTO>> response = new PageResponse<>(
                 productPage.getSize(),
                 productPage.getNumber(),
                 productPage.getTotalPages(),
                 productDTOS
         );
+
+        redisTemplate.opsForValue().set(redisKey, response, Duration.ofMinutes(5));
+        return response;
     }
+
+
+
+//    public PageResponse<List<ProductDTO>> getAllProducts(Pageable pageable) {
+//
+//        Page<Product> productPage = productRepository.findAll(pageable);
+//        List<ProductDTO> productDTOS = productPage.getContent().stream()
+//                .map(p -> modelMapper.map(p, ProductDTO.class))
+//                .toList();
+//
+//        return new PageResponse<>(
+//                productPage.getSize(),
+//                productPage.getNumber(),
+//                productPage.getTotalPages(),
+//                productDTOS
+//        );
+//    }
 
 //    public void addProduct(ProductDTO productAddDTO) {
 //        Product product = new Product();

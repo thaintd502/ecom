@@ -14,6 +14,7 @@ import com.ecom2.product.dto.ProductDTO;
 import com.ecom2.user.entity.User;
 import com.ecom2.user.service.UserService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
