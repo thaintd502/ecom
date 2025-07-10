@@ -30,6 +30,11 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
 
 		<dependency>
 			<groupId>io.lettuce</groupId>
@@ -53,8 +58,6 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope> <!-- Chỉ chạy ở môi trường phát triển -->
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

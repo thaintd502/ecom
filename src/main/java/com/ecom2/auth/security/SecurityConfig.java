@@ -55,6 +55,8 @@ public class SecurityConfig {
                                         .requestMatchers("/api/admin/**").hasAnyAuthority(ERole.ROLE_ADMIN.name())
                                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                         .requestMatchers("/cloudinary/**").permitAll()
+                                        .requestMatchers("/ws/**").permitAll()
+
                 );
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
